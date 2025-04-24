@@ -14,6 +14,7 @@ class Statusbar extends Component {
     super();
 
     this.setDependencies();
+    this.lastScrollTime = 0; // buat throttle scroll
   }
 
   setDependencies() {
@@ -269,31 +270,58 @@ class Statusbar extends Component {
   handleWheelScroll(event) {
     if (!event) return;
 
-    let { target, wheelDelta } = event;
+    const now = Date.now();
+    if (now - this.lastScrollTime < 300) return; // delay 300ms
+    this.lastScrollTime = now;
+
+    let { target, deltaY } = event;
 
     if (target.shadow && target.shadow.activeElement) return;
 
-    let activeTab = -1;
-    this.refs.tabs.forEach((tab, index) => {
-      if (tab.getAttribute("active") === "") {
-        activeTab = index;
-      }
-    });
+    let activeTab = this.currentTabIndex ?? -1;
+    const maxIndex = this.refs.tabs.length - 2;
 
-    // if (wheelDelta > 0) {
-    //   this.activateByKey((activeTab + 1) % (this.refs.tabs.length - 1));
-    // } else {
-    //   this.activateByKey(activeTab - 1 < 0 ? this.refs.tabs.length - 2 : activeTab - 1);
-    // }
-
-    if (wheelDelta > 0) {
-      // Scroll ke atas → ke tab sebelumnya
-      this.activateByKey(activeTab - 1 < 0 ? this.refs.tabs.length - 2 : activeTab - 1);
-    } else {
+    if (deltaY > 0) {
       // Scroll ke bawah → ke tab berikutnya
-      this.activateByKey((activeTab + 1) % (this.refs.tabs.length - 1));
+      if (activeTab < maxIndex) {
+        this.activateByKey(activeTab + 1);
+      }
+    } else {
+      // Scroll ke atas → ke tab sebelumnya
+      if (activeTab > 0) {
+        this.activateByKey(activeTab - 1);
+      }
     }
   }
+
+  // handleWheelScroll(event) {
+  //   if (!event) return;
+
+  //   let { target, wheelDelta } = event;
+
+  //   if (target.shadow && target.shadow.activeElement) return;
+
+  //   let activeTab = -1;
+  //   this.refs.tabs.forEach((tab, index) => {
+  //     if (tab.getAttribute("active") === "") {
+  //       activeTab = index;
+  //     }
+  //   });
+
+  //   // if (wheelDelta > 0) {
+  //   //   this.activateByKey((activeTab + 1) % (this.refs.tabs.length - 1));
+  //   // } else {
+  //   //   this.activateByKey(activeTab - 1 < 0 ? this.refs.tabs.length - 2 : activeTab - 1);
+  //   // }
+
+  //   if (wheelDelta > 0) {
+  //     // Scroll ke atas → ke tab sebelumnya
+  //     this.activateByKey(activeTab - 1 < 0 ? this.refs.tabs.length - 2 : activeTab - 1);
+  //   } else {
+  //     // Scroll ke bawah → ke tab berikutnya
+  //     this.activateByKey((activeTab + 1) % (this.refs.tabs.length - 1));
+  //   }
+  // }
 
   handleKeyPress(event) {
     if (!event) return;
@@ -328,18 +356,31 @@ class Statusbar extends Component {
     const maxIndex = this.refs.tabs.length - 1;
 
     // Batasi supaya key harus valid
-    if (key < 0 || key > maxIndex) return;
+    if (key < 0 || key > maxIndex) {
+      console.warn(`Invalid key: ${key}. Must be between 0 and ${maxIndex}.`);
+      return;
+    }
 
     this.currentTabIndex = key;
 
+    console.log(`Activating tab at index: ${key}`);
     this.activate(this.refs.tabs, this.refs.tabs[key]);
     this.activate(this.externalRefs.categories, this.externalRefs.categories[key]);
   }
 
+  // createTabs() {
+  //   const categoriesCount = this.externalRefs.categories.length;
+
+  //   for (let i = 0; i <= categoriesCount; i++) {
+  //     this.refs.indicator.innerHTML += `<li tab-index=${i} ${i == 0 ? "active" : ""}></li>`;
+  //   }
+  // }
+
   createTabs() {
     const categoriesCount = this.externalRefs.categories.length;
 
-    for (let i = 0; i <= categoriesCount; i++) {
+    for (let i = 0; i < categoriesCount; i++) {
+      // Change to < instead of <=
       this.refs.indicator.innerHTML += `<li tab-index=${i} ${i == 0 ? "active" : ""}></li>`;
     }
   }
