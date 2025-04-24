@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Custom New Tab",
+  "name": "Home Page Aria",
   "version": "1.0",
   "description": "Ganti new tab jadi web app",
   "chrome_url_overrides": {
