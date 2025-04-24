@@ -277,6 +277,12 @@ const default_config = {
               icon_color: "#ea6962",
             },
             {
+              name: "pixiv",
+              url: "https://www.pixiv.net/en/",
+              icon: "palette",
+              icon_color: "#ea6962",
+            },
+            {
               name: "ArtStation",
               url: "https://www.artstation.com/?sort_by=community",
               icon: "chart-area",
