@@ -23,11 +23,7 @@ class Statusbar extends Component {
   }
 
   imports() {
-    return [
-      this.resources.fonts.roboto,
-      this.resources.icons.material,
-      this.resources.libs.awoo,
-    ];
+    return [this.resources.fonts.roboto, this.resources.icons.material, this.resources.libs.awoo];
   }
 
   style() {
@@ -241,9 +237,7 @@ class Statusbar extends Component {
   }
 
   setEvents() {
-    this.refs.tabs.forEach((tab) =>
-      tab.onclick = ({ target }) => this.handleTabChange(target)
-    );
+    this.refs.tabs.forEach((tab) => (tab.onclick = ({ target }) => this.handleTabChange(target)));
 
     document.onkeydown = (e) => this.handleKeyPress(e);
     document.onwheel = (e) => this.handleWheelScroll(e);
@@ -252,7 +246,7 @@ class Statusbar extends Component {
       if (CONFIG.config.fastlink) {
         window.location.href = CONFIG.config.fastlink;
       }
-    }
+    };
 
     if (CONFIG.openLastVisitedTab) {
       window.onbeforeunload = () => this.saveCurrentTab();
@@ -286,12 +280,18 @@ class Statusbar extends Component {
       }
     });
 
+    // if (wheelDelta > 0) {
+    //   this.activateByKey((activeTab + 1) % (this.refs.tabs.length - 1));
+    // } else {
+    //   this.activateByKey(activeTab - 1 < 0 ? this.refs.tabs.length - 2 : activeTab - 1);
+    // }
+
     if (wheelDelta > 0) {
-      this.activateByKey((activeTab + 1) % (this.refs.tabs.length - 1));
+      // Scroll ke atas → ke tab sebelumnya
+      this.activateByKey(activeTab - 1 < 0 ? this.refs.tabs.length - 2 : activeTab - 1);
     } else {
-      this.activateByKey(
-        (activeTab - 1) < 0 ? this.refs.tabs.length - 2 : activeTab - 1,
-      );
+      // Scroll ke bawah → ke tab berikutnya
+      this.activateByKey((activeTab + 1) % (this.refs.tabs.length - 1));
     }
   }
 
@@ -302,32 +302,45 @@ class Statusbar extends Component {
 
     if (target.shadow && target.shadow.activeElement) return;
 
-    if (
-      Number.isInteger(parseInt(key)) &&
-      key <= this.externalRefs.categories.length
-    ) {
+    // Navigasi dengan angka
+    if (Number.isInteger(parseInt(key)) && key <= this.externalRefs.categories.length) {
       this.activateByKey(key - 1);
+    }
+
+    // Navigasi dengan panah kiri/kanan
+    const activeTab = this.currentTabIndex ?? 0;
+    if (key === "ArrowRight") {
+      this.activateByKey((activeTab + 1) % this.externalRefs.categories.length);
+    } else if (key === "ArrowLeft") {
+      this.activateByKey((activeTab - 1 + this.externalRefs.categories.length) % this.externalRefs.categories.length);
     }
   }
 
+  // activateByKey(key) {
+  //   if (key < 0) return;
+  //   this.currentTabIndex = key;
+
+  //   this.activate(this.refs.tabs, this.refs.tabs[key]);
+  //   this.activate(this.externalRefs.categories, this.externalRefs.categories[key]);
+  // }
+
   activateByKey(key) {
-    if (key < 0) return;
+    const maxIndex = this.refs.tabs.length - 1;
+
+    // Batasi supaya key harus valid
+    if (key < 0 || key > maxIndex) return;
+
     this.currentTabIndex = key;
 
     this.activate(this.refs.tabs, this.refs.tabs[key]);
-    this.activate(
-      this.externalRefs.categories,
-      this.externalRefs.categories[key],
-    );
+    this.activate(this.externalRefs.categories, this.externalRefs.categories[key]);
   }
 
   createTabs() {
     const categoriesCount = this.externalRefs.categories.length;
 
     for (let i = 0; i <= categoriesCount; i++) {
-      this.refs.indicator.innerHTML += `<li tab-index=${i} ${
-        i == 0 ? "active" : ""
-      }></li>`;
+      this.refs.indicator.innerHTML += `<li tab-index=${i} ${i == 0 ? "active" : ""}></li>`;
     }
   }
 

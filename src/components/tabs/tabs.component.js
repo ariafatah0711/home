@@ -16,27 +16,27 @@ class Links extends Component {
     const { categories } = tabs.find((f) => f.name === tabName);
 
     return `
-      ${
-      categories.map(({ name, links }) => {
-        return `
+      ${categories
+        .map(({ name, links }) => {
+          return `
           <li>
             <h1>${name}</h1>
               <div class="links-wrapper">
-              ${
-          links.map((link) => `
+              ${links
+                .map(
+                  (link) => `
                   <div class="link-info">
                     <a href="${link.url}">
                       ${Links.getIcon(link)}
-                      ${
-            link.name ? `<p class="link-name">${link.name}</p>` : ""
-          }
+                      ${link.name ? `<p class="link-name">${link.name}</p>` : ""}
                     </a>
-                </div>`).join("")
-        }
+                </div>`
+                )
+                .join("")}
             </div>
           </li>`;
-      }).join("")
-    }
+        })
+        .join("")}
     `;
   }
 }
@@ -52,16 +52,14 @@ class Category extends Component {
 
   static getAll(tabs) {
     return `
-      ${
-      tabs.map(({ name, background_url }, index) => {
-        return `<ul class="${name}" ${
-          Category.getBackgroundStyle(background_url)
-        } ${index == 0 ? "active" : ""}>
+      ${tabs
+        .map(({ name, background_url }, index) => {
+          return `<ul class="${name}" ${Category.getBackgroundStyle(background_url)} ${index == 0 ? "active" : ""}>
             <div class="banner"></div>
             <div class="links">${Links.getAll(name, tabs)}</div>
           </ul>`;
-      }).join("")
-    }
+        })
+        .join("")}
     `;
   }
 }

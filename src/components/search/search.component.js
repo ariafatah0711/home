@@ -1,9 +1,9 @@
 class Search extends Component {
   refs = {
-    search: '#search',
+    search: "#search",
     input: '#search input[type="text"]',
-    engines: '.search-engines',
-    close: '.close'
+    engines: ".search-engines",
+    close: ".close",
   };
 
   constructor() {
@@ -104,10 +104,7 @@ class Search extends Component {
   }
 
   imports() {
-    return [
-      this.resources.fonts.roboto,
-      this.resources.icons.material
-    ];
+    return [this.resources.fonts.roboto, this.resources.icons.material];
   }
 
   template() {
@@ -123,46 +120,88 @@ class Search extends Component {
   }
 
   loadEngines() {
-    for (var key in this.engines)
-      this.refs.engines.innerHTML += `<li><p title="${this.engines[key][1]}">!${key}</p></li>`;
+    for (var key in this.engines) this.refs.engines.innerHTML += `<li><p title="${this.engines[key][1]}">!${key}</p></li>`;
   }
 
   activate() {
-    this.refs.search.classList.add('active');
+    this.refs.search.classList.add("active");
     this.refs.input.scrollIntoView();
     setTimeout(() => this.refs.input.focus(), 100);
   }
 
   deactivate() {
-    this.refs.search.classList.remove('active');
+    this.refs.search.classList.remove("active");
   }
+
+  // handleSearch(event) {
+  //   const { target, key } = event;
+
+  //   let args = target.value.split(' ');
+  //   let prefix = args[0];
+  //   let defaultEngine = this.engines['g'][0];
+  //   let engine = defaultEngine;
+
+  //   this.refs.engines.childNodes.forEach(engine => {
+  //     if (prefix === engine.firstChild.innerHTML)
+  //       engine.classList.add('active');
+  //     else
+  //       engine.classList.remove('active');
+  //   });
+
+  //   if (key === 'Enter') {
+  //     if (prefix.indexOf('!') === 0) {
+  //       engine = this.engines[prefix.substr(1)][0];
+  //       args = args.slice(1);
+  //     }
+
+  //     window.location = engine + encodeURI(args.join(' '));
+  //   }
+
+  //   if (key === 'Escape')
+  //     this.deactivate();
+  // }
 
   handleSearch(event) {
     const { target, key } = event;
 
-    let args = target.value.split(' ');
+    let args = target.value.trim().split(" ");
     let prefix = args[0];
-    let defaultEngine = this.engines['g'][0];
+    let defaultEngine = this.engines["g"][0];
     let engine = defaultEngine;
 
-    this.refs.engines.childNodes.forEach(engine => {
-      if (prefix === engine.firstChild.innerHTML)
-        engine.classList.add('active');
-      else
-        engine.classList.remove('active');
+    this.refs.engines.childNodes.forEach((engine) => {
+      if (prefix === engine.firstChild.innerHTML) engine.classList.add("active");
+      else engine.classList.remove("active");
     });
 
-    if (key === 'Enter') {
-      if (prefix.indexOf('!') === 0) {
-        engine = this.engines[prefix.substr(1)][0];
+    if (key === "Enter") {
+      const query = args.join(" ");
+
+      // Deteksi jika input adalah URL atau IP
+      const isUrl = /^https?:\/\/.+|^[\w-]+\.[a-z]{2,}$/i.test(query);
+      const isIp = /^(\d{1,3}\.){1,3}\d{1,3}$/.test(query);
+
+      if (isUrl) {
+        // Tambahkan https jika belum ada
+        const url = query.startsWith("http") ? query : `https://${query}`;
+        window.location = url;
+        return;
+      }
+
+      if (isIp) {
+        window.location = `http://${query}`;
+        return;
+      }
+
+      if (prefix.indexOf("!") === 0) {
+        engine = this.engines[prefix.substr(1)]?.[0] ?? defaultEngine;
         args = args.slice(1);
       }
 
-      window.location = engine + encodeURI(args.join(' '));
+      window.location = engine + encodeURIComponent(args.join(" "));
     }
 
-    if (key === 'Escape')
-      this.deactivate();
+    if (key === "Escape") this.deactivate();
   }
 
   setEvents() {
