@@ -13,6 +13,7 @@ class Links extends Component {
   }
 
   static getAll(tabName, tabs) {
+    console.log(tabName, tabs);
     const { categories } = tabs.find((f) => f.name === tabName);
 
     return `

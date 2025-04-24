@@ -377,7 +377,7 @@ class Statusbar extends Component {
   // }
 
   createTabs() {
-    const categoriesCount = this.externalRefs.categories.length;
+    const categoriesCount = this.externalRefs.categories.length + 1;
 
     for (let i = 0; i < categoriesCount; i++) {
       // Change to < instead of <=
