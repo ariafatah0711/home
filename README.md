@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="/img/README-decorator.png" width=300/><br/>
+    <img src="/img/icon.png" width=300/><br/>
     <a href="https://github.com/AllJavi/tartarus-startpage/stargazers">
         <img src="https://img.shields.io/github/stars/AllJavi/tartarus-startpage?color=a9b665&style=for-the-badge&logo=starship">
     </a>
@@ -60,6 +60,11 @@ By default, the defined search engines are:
 |cbg-10|cbg-11|cbg-12|cbg-13|
 | ------------- | ------------- | ------------- | ------------- |
 |<img src="src/img/banners/cbg-10.gif" width=175>|<img src="src/img/banners/cbg-11.gif" width=175>|<img src="src/img/banners/cbg-12.gif" width=175>|<img src="src/img/banners/cbg-13.gif" width=175>|
+
+## add extension
+- opeen [edge://extensions/](edge://extensions/)
+- Aktifin Developer mode (pojok kiri bawah)
+- Klik "Load unpacked" / "muat paket"
 
 ## Local Icons
 If you want to reduce the loading time of the icons, you could install the [icon font](https://github.com/AllJavi/tartarus-startpage/tree/master/src/fonts) locally and activate the option `"localIcons": true` in the config to disable the remote styles.
